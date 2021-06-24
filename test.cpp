@@ -441,7 +441,7 @@ public:
             char current = _getch();
             if (current == 'y')
             {
-                cGame game(30, 4);
+                cGame game (100,4); /// NIE MAM POMYSŁY JAK TE GOWNO WYSTARTOWAC Z WARTOSCIAMI WPROWADZONYMI NA POCZATKU!!1
                 game.Run();
                 break;
             }
