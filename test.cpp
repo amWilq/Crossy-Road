@@ -179,7 +179,7 @@ public:
         int s1=a1.GetS();
 
         for (int i = 0; i < width; i++)
-            cars.push_front(rand() % s1 == 2); ///Dodaje elemend na koniec. Kierunek elementów, w tym przypadku od lewej strony
+            cars.push_front(rand() % s1 == 2); ///s1 = wartosc wpisane przez classe A, nie wiem jak wycagnac samą warosc s1, bo np jak plansza ma 10 lini dlugosci to trzeba 10 razy wpisac s1,  
         right = rand() % 2; /// Generuje randomowo false albo true '01'
 
     }
