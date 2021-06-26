@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <string>
 #include <stdlib.h>
+#include "iostream"
 #include "time.h"
 #include "windows.h"
 using namespace std;
@@ -45,33 +46,6 @@ void WindowInit()
     SetConsoleSize(480, 640);
     removeCursor();
 }
-
-class a
-{
-public:
-    int s;
-    void SetS() {
-        cin >> s;
-        cout << s << endl;}
-    int GetS() const { return s; }
-
-
-};
-class A {
-public:
-    int num1,num2;
-    void start()
-    {
-        system("cls");
-        gotoxy(5,15);
-        TextColor(12);
-
-        cout << "Podaj rozmiar planszy, najpierw szerokosci potem wysokośc";
-        cin >> num1 >> num2;
-
-
-    }
-};
 
 class TablicaRekordow
 {
@@ -168,18 +142,15 @@ public:
 class cLane
 {
 private:
+    int poziom;
     deque<bool> cars;
     bool right;
 public:
-    cLane(int width)
+    cLane(int width, int p)
     {
-
-        a a1;
-        a1.SetS();
-        int s1=a1.GetS();
-
+        poziom = p;
         for (int i = 0; i < width; i++)
-            cars.push_front(rand() % s1 == 2); ///s1 = wartosc wpisane przez classe A, nie wiem jak wycagnac samą warosc s1, bo np jak plansza ma 10 lini dlugosci to trzeba 10 razy wpisac s1,  
+            cars.push_front((rand() % poziom )== 2); ///Dodaje elemend na koniec. Kierunek elementów, w tym przypadku od lewej strony
         right = rand() % 2; /// Generuje randomowo false albo true '01'
 
     }
@@ -209,6 +180,7 @@ public:
 class cGame
 {
 private:
+    int diff;
     TablicaRekordow* Tab;
     bool quit;
     int IloscLini;
@@ -218,16 +190,16 @@ private:
     vector<cLane*> KierunekPrzeszkod;
 
 public:
-    cGame(int w, int h)
+    cGame(int w, int h, int p)
 
-        /// deklaracja wykosoci i szerowkosci mapy
+    /// deklaracja wykosoci i szerowkosci mapy
     {
-
+        diff = p;
         IloscLini = h;
         Szerokosc = w;
         quit = false;
         for (int i = 0; i < IloscLini; i++)
-            KierunekPrzeszkod.push_back(new cLane(Szerokosc));
+            KierunekPrzeszkod.push_back(new cLane(Szerokosc,p));
         Gracz = new cPlayer(Szerokosc);
         Tab = new TablicaRekordow();
     }
@@ -243,73 +215,30 @@ public:
         }
     }
 
-    int num1;
-    void start()
-    {
-        TextColor(14);
-
-        cout << " \n";
-        cout << "Plansza nr 1: Mała\n";
-        cout << "Plansza nr 2: Średnia\n";
-        cout << "Plansza nr 3: Duża\n";
-        cout << "Plansza nr 4: Długa\n";
-
-        cin >> num1;
-
-
-        switch (num1) {
-
-            case 1:
-            {
-                cGame game (50,4);
-                game.Run();
-                break;
-            }
-            case 2:
-            {
-                cGame game (80,5);
-                game.Run();
-                break;
-            }
-            case 3:
-            {
-                cGame game (80,10);
-                game.Run();
-                break;
-            }
-            case 4:
-            {
-                cGame game (80,15);
-                game.Run();
-                break;
-            }
-            default:
-                system("cls");
-                gotoxy(5,15);
-                TextColor(12);
-                cout << "Zle wybrales, sporbuj jeszcze raz";
-                Sleep(5000);
-                exit(0);
-        }
-
-
-        system("cls");
-        gotoxy(5,15);
-        TextColor(12);
-
-
-
-
-    }
-
-
 
     void ZdobytePunkty()
     {
-        Punkty += 100;
         TextColor(14);
         gotoxy(Szerokosc / 2 - 8, IloscLini / 2);
-        cout << "Zdobyles 100 punktow \a "; /// /a wydaje dzwięk po zdobyciu punktów
+        switch (diff)
+        {
+            case 100:
+                Punkty = Punkty + 100;
+                cout << "Zdobyles 100 punktow \a "; /// /a wydaje dzwięk po zdobyciu punktów
+                break;
+            case 20:
+                Punkty = Punkty + 200;
+                cout << "Zdobyles 200 punktow \a "; /// /a wydaje dzwięk po zdobyciu punktów
+                break;
+            case 5:
+                Punkty = Punkty + 300;
+                cout << "Zdobyles 300 punktow \a "; /// /a wydaje dzwięk po zdobyciu punktów
+                break;
+            case 2:
+                Punkty = Punkty + 400;
+                cout << "Zdobyles 400 punktow \a "; /// /a wydaje dzwięk po zdobyciu punktów
+                break;
+        }
         Sleep(1000);
         TextColor(7);
     }
@@ -343,7 +272,7 @@ public:
 
         TextColor(15);
         gotoxy(0, IloscLini + 3);
-        cout << "autor: Lukasz, Grzegorz" << endl;
+        cout << "autor: Lukasz Pospiech, Grzegorz Suchon" << endl;
         if (Tab->wynik[0] > 0)
         {
             cout << "------------------------------------" << endl;
@@ -366,17 +295,21 @@ public:
 
 
     void Input()
-        /* _kbhit robi pętlę dopóki użytkownik
-        * nie wciśnie odpowieniego klawisza.
-        */
+    /* _kbhit robi pętlę dopóki użytkownik
+    * nie wciśnie odpowieniego klawisza.
+    */
     {
         if (_kbhit())
         {
             char current = _getch();
             if (current == 'a' || current == 'A')
-                Gracz->x--;
+            {
+                if ((Gracz->x)!=0) Gracz->x--;
+            }
             if (current == 'd' || current == 'D')
-                Gracz->x++;
+            {
+                if ((Gracz->x) != (Szerokosc - 1)) Gracz->x++;
+            }
             if (current == 'w' || current == 'W')
                 Gracz->y--;
             if (current == 's' || current == 'S')
@@ -441,12 +374,14 @@ public:
             char current = _getch();
             if (current == 'y')
             {
-                cGame game (100,4); /// NIE MAM POMYSŁY JAK TE GOWNO WYSTARTOWAC Z WARTOSCIAMI WPROWADZONYMI NA POCZATKU!!1
+                cGame game(Szerokosc, IloscLini, diff);
                 game.Run();
                 break;
             }
             else if (current == 'n')
             {
+                gotoxy(1, IloscLini+15);
+                TextColor(0);
                 exit(0);
             }
         }
@@ -455,11 +390,67 @@ public:
 
 int main()
 {
+    int a, b, c;
+    cout << "Wybierz wielkosc planszy:" << endl;
+    cout << "1. Mala plansza" << endl;
+    cout << "2. Srednia plansza" << endl;
+    cout << "3. Duza plansza" << endl;
+    cout << "4. Bardzo duza plansza" << endl;
+    cin >> a;
+    switch (a)
+    {
+        case 1:
+            a = 30;
+            b = 4;
+            break;
+        case 2:
+            a = 50;
+            b = 5;
+            break;
+        case 3:
+            a = 70;
+            b = 7;
+            break;
+        case 4:
+            a = 90;
+            b = 11;
+            break;
+        default:
+            cout << "Zle wybrales, sprobuj jeszcze raz" << endl;
+            Sleep(2000);
+            exit(0);
+    }
+
+    cout << "Wybierz poziom trudnosci:" << endl;
+    cout << "1. Latwy" << endl;
+    cout << "2. Sredni" << endl;
+    cout << "3. Trudny" << endl;
+    cout << "4. Bardzo trudny" << endl;
+    cin >> c;
+    switch (c)
+    {
+        case 1:
+            c = 100;
+            break;
+        case 2:
+            c = 20;
+            break;
+        case 3:
+            c=5;
+            break;
+        case 4:
+            c = 2;
+            break;
+        default:
+            cout << "Zle wybrales, sprobuj jeszcze raz" << endl;
+            Sleep(2000);
+            exit(0);
+    }
+
+
     srand(time(NULL));
-    ///A obj;
-    ///obj.start();
-    cGame game(0,0);
-    game.start();
-    getchar();
-    return 0;
+    cGame game(a, b, c);
+    game.Run();
+    //getchar();
+    //return 0;
 }
