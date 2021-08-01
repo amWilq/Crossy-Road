@@ -1,6 +1,6 @@
 
 <h2>About</h2>
-project from the subject of programming
+Project from college
 
 <h2>Goal and requirements</h2>
 
